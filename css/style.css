@@ -85,6 +85,8 @@ html, body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
   padding: 0.75rem 1.5rem;
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(12px);
@@ -101,16 +103,16 @@ html, body {
 }
 
 .brand-logo-img {
-  height: 54px;
-  width: auto;
-  max-width: 160px;
+  width: 300px;
+  height: 300px;
+  max-width: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 2px 5px rgba(2, 132, 199, 0.2));
+  filter: drop-shadow(0 4px 12px rgba(2, 132, 199, 0.25));
   transition: transform 0.2s ease;
 }
 
 .brand-logo-img:hover {
-  transform: scale(1.04);
+  transform: scale(1.03);
 }
 
 .brand-icon {
