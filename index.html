@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>วงล้อสุ่มชื่อนักเรียน | Classroom Wheel of Names</title>
+  <meta name="description" content="เว็บวงล้อสุ่มชื่อนักเรียนในห้องเรียน ไม่มีโฆษณา สวยงาม ใช้งานง่าย เหมาะสำหรับจอสมาร์ททีวีและโปรเจกเตอร์">
+  
+  <!-- Google Fonts: Kanit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand-section">
+        <div class="brand-icon">🎡</div>
+        <div>
+          <h1 class="brand-title">วงล้อสุ่มชื่อนักเรียน</h1>
+          <p class="brand-subtitle">Classroom Random Name Picker • ไม่มีโฆษณา</p>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <button id="groupMakerBtn" class="btn btn-secondary" title="สุ่มแบ่งกลุ่มนักเรียน">
+          <span>👥</span> สุ่มแบ่งกลุ่ม
+        </button>
+        <button id="quickPickBtn" class="btn btn-secondary" title="สุ่มชื่อแบบด่วน">
+          <span>⚡</span> สุ่มด่วน
+        </button>
+        <button id="soundToggleBtn" class="btn btn-outline btn-icon-only" title="เปิด/ปิดเสียง">
+          <span id="soundIcon">🔊</span>
+        </button>
+        <button id="fullscreenBtn" class="btn btn-primary" title="โหมดเต็มหน้าจอสำหรับจอโปรเจกเตอร์หรือทีวี">
+          <span>⛶</span> เต็มจอ (TV/โปรเจกเตอร์)
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="workspace-grid">
+      <!-- Left Column: Wheel Stage -->
+      <section class="wheel-stage-container">
+        <div class="wheel-canvas-wrapper">
+          <canvas id="wheelCanvas" width="540" height="540" title="คลิกที่วงล้อหรือกดปุ่มเพื่อหมุน"></canvas>
+        </div>
+
+        <div class="spin-action-wrapper">
+          <button id="spinBtn" class="btn-big-spin">
+            <span>🎯</span> หมุนสุ่มชื่อ (SPIN)
+          </button>
+          <div class="spin-keyboard-hint">
+            💡 กดปุ่ม <kbd>Spacebar</kbd> หรือ <kbd>Enter</kbd> บนคีย์บอร์ดเพื่อหมุน
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Controls, Names, History & Settings -->
+      <aside class="control-column">
+        <!-- Class Selector Card -->
+        <div class="card class-selector-card">
+          <div class="class-header-row">
+            <span class="class-title-label">🏫 เลือกห้องเรียน / กิจกรรม</span>
+            <div class="editor-actions">
+              <button id="newClassBtn" class="btn btn-primary btn-icon-only" title="สร้างห้องเรียนใหม่">+</button>
+              <button id="renameClassBtn" class="btn btn-outline btn-icon-only" title="เปลี่ยนชื่อห้อง">✏️</button>
+              <button id="deleteClassBtn" class="btn btn-danger btn-icon-only" title="ลบห้องนี้">🗑️</button>
+            </div>
+          </div>
+          <div class="class-dropdown-group">
+            <select id="classSelect" class="class-select" aria-label="เลือกห้องเรียน"></select>
+          </div>
+        </div>
+
+        <!-- Tabs Card -->
+        <div class="card">
+          <div class="tabs-navigation">
+            <button class="tab-btn active" data-tab="tabStudents">
+              <span>📝</span> รายชื่อนักเรียน
+            </button>
+            <button class="tab-btn" data-tab="tabHistory">
+              <span>🏆</span> ประวัติผู้โชคดี <span id="historyBadge" class="tab-badge">0</span>
+            </button>
+            <button class="tab-btn" data-tab="tabSettings">
+              <span>⚙️</span> การตั้งค่า
+            </button>
+          </div>
+
+          <!-- Tab 1: Student List -->
+          <div id="tabStudents" class="tab-pane active">
+            <div class="editor-toolbar">
+              <span id="studentCountBadge" class="student-count-indicator">0 คน</span>
+              <div class="editor-actions">
+                <button id="shuffleBtn" class="btn btn-outline" title="สลับลำดับรายชื่อ">
+                  <span>🔀</span> สลับที่
+                </button>
+                <button id="sortBtn" class="btn btn-outline" title="เรียงตามตัวอักษร ก-ฮ / A-Z">
+                  <span>🔤</span> เรียง A-Z
+                </button>
+                <button id="clearListBtn" class="btn btn-danger btn-icon-only" title="ล้างรายชื่อทั้งหมด">
+                  <span>🗑️</span>
+                </button>
+              </div>
+            </div>
+            <textarea id="namesTextarea" class="names-textarea" placeholder="พิมพ์หรือวางรายชื่อนักเรียนที่นี่ (บรรทัดละ 1 ชื่อ)..."></textarea>
+            <div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">
+              * รายชื่อจะถูกบันทึกในเครื่องอัตโนมัติ ไม่ต้องกลัวข้อมูลหาย
+            </div>
+          </div>
+
+          <!-- Tab 2: Winner History -->
+          <div id="tabHistory" class="tab-pane">
+            <div class="editor-toolbar">
+              <span style="font-size: 1.05rem; font-weight: 600; color: var(--primary-900);">ประวัติการสุ่มในรอบนี้</span>
+              <div class="editor-actions">
+                <button id="exportHistoryBtn" class="btn btn-outline" title="บันทึกเป็นไฟล์ข้อความ">
+                  <span>💾</span> บันทึกไฟล์
+                </button>
+                <button id="clearHistoryBtn" class="btn btn-danger" title="ล้างประวัติ">
+                  <span>🗑️</span> ล้างประวัติ
+                </button>
+              </div>
+            </div>
+            <div id="historyList" class="history-list">
+              <div class="history-empty">ยังไม่มีประวัติการสุ่ม</div>
+            </div>
+          </div>
+
+          <!-- Tab 3: Settings -->
+          <div id="tabSettings" class="tab-pane">
+            <div class="settings-group">
+              <div class="setting-row">
+                <div class="setting-info">
+                  <span class="setting-label">⏱️ ระยะเวลาในการหมุน</span>
+                  <span class="setting-desc">ปรับความเร็วหรือความตื่นเต้น</span>
+                </div>
+                <div class="setting-control">
+                  <input type="range" id="spinDurationInput" class="slider-input" min="3" max="20" step="1" value="6">
+                  <span id="spinDurationValue" style="font-weight: 600; min-width: 65px; color: var(--primary-700);">6 วินาที</span>
+                </div>
+              </div>
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <span class="setting-label">🎨 โทนสีวงล้อ</span>
+                  <span class="setting-desc">เลือกพาเลทสีที่เข้ากับห้องเรียน</span>
+                </div>
+                <div class="setting-control">
+                  <select id="paletteSelect" class="class-select" style="padding: 0.4rem 0.8rem; font-size: 0.95rem;">
+                    <option value="sky_vibrant">ฟ้าสดใส (Sky Vibrant)</option>
+                    <option value="pastel">พาสเทลน่ารัก (Pastel)</option>
+                    <option value="rainbow">สายรุ้งเจิดจ้า (Rainbow)</option>
+                    <option value="neon">นีออนสด (Neon)</option>
+                    <option value="warm">โทนร้อนสดใส (Warm)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <span class="setting-label">🔊 เสียงประกอบ</span>
+                  <span class="setting-desc">เสียงเข็มหมุนและเสียงไชโยฉลอง</span>
+                </div>
+                <div class="setting-control">
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="soundSettingToggle" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <span class="setting-label">🎉 พลุกระดาษเฉลิมฉลอง (Confetti)</span>
+                  <span class="setting-desc">เอฟเฟกต์พลุกระดาษเมื่อได้ผู้ชนะ</span>
+                </div>
+                <div class="setting-control">
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="confettiSettingToggle" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      Classroom Wheel of Names • ใช้งานฟรีสำหรับการเรียนการสอน • ไม่มีโฆษณา
+    </footer>
+  </div>
+
+  <!-- Winner Celebration Modal -->
+  <div id="winnerModal" class="modal-overlay">
+    <div class="winner-modal-card">
+      <div class="winner-trophy-icon">🎉</div>
+      <div class="winner-title-badge">ผู้ได้รับเลือกคือ!</div>
+      <div id="winnerNameDisplay" class="winner-name-display">ชื่อนักเรียน</div>
+      <div class="winner-actions">
+        <button id="removeWinnerBtn" class="btn btn-winner-remove">
+          <span>❌</span> ลบชื่อนี้ออก
+        </button>
+        <button id="keepWinnerBtn" class="btn btn-winner-keep">
+          <span>✅</span> เก็บชื่อไว้ในวงล้อ
+        </button>
+        <button id="spinAgainBtn" class="btn btn-secondary" style="font-size: 1.15rem; padding: 0.85rem 1.4rem;">
+          <span>🔄</span> สุ่มอีกครั้ง
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Group Maker Modal -->
+  <div id="groupModal" class="modal-overlay">
+    <div class="modal-standard">
+      <div class="modal-header">
+        <h2 class="modal-title"><span>👥</span> ระบบสุ่มแบ่งกลุ่มนักเรียน</h2>
+        <button id="closeGroupModalBtn" class="modal-close-btn">&times;</button>
+      </div>
+
+      <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap;">
+        <label for="numGroupsSelect" style="font-weight: 600; font-size: 1.1rem; color: var(--primary-900);">จำนวนกลุ่มที่ต้องการ:</label>
+        <select id="numGroupsSelect" class="class-select" style="width: 140px;">
+          <option value="2">2 กลุ่ม</option>
+          <option value="3">3 กลุ่ม</option>
+          <option value="4" selected>4 กลุ่ม</option>
+          <option value="5">5 กลุ่ม</option>
+          <option value="6">6 กลุ่ม</option>
+          <option value="7">7 กลุ่ม</option>
+          <option value="8">8 กลุ่ม</option>
+          <option value="9">9 กลุ่ม</option>
+          <option value="10">10 กลุ่ม</option>
+        </select>
+        <button id="generateGroupsBtn" class="btn btn-primary">
+          <span>🎲</span> สุ่มแบ่งกลุ่มใหม่
+        </button>
+        <button id="copyGroupsBtn" class="btn btn-outline">
+          <span>📋</span> คัดลอกผลลัพธ์
+        </button>
+      </div>
+
+      <div id="groupsResultContainer" class="groups-result-grid"></div>
+    </div>
+  </div>
+
+  <!-- Quick Pick Modal -->
+  <div id="quickPickModal" class="modal-overlay">
+    <div class="modal-standard" style="max-width: 520px; text-align: center;">
+      <div class="modal-header">
+        <h2 class="modal-title"><span>⚡</span> สุ่มชื่อแบบด่วน (Quick Pick)</h2>
+        <button id="closeQuickPickModalBtn" class="modal-close-btn">&times;</button>
+      </div>
+      <div style="padding: 2rem 1rem;">
+        <div id="quickPickDisplay" class="winner-name-display" style="margin-bottom: 2rem;">กำลังสุ่ม...</div>
+        <button id="pickAnotherBtn" class="btn btn-primary" style="font-size: 1.25rem; padding: 0.8rem 2rem;">
+          <span>🎲</span> สุ่มคนต่อไป
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/audio.js"></script>
+  <script src="js/confetti.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/wheel.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
