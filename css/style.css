@@ -102,19 +102,6 @@ html, body {
   gap: 0.85rem;
 }
 
-.brand-logo-img {
-  width: 300px;
-  height: 300px;
-  max-width: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 4px 12px rgba(2, 132, 199, 0.25));
-  transition: transform 0.2s ease;
-}
-
-.brand-logo-img:hover {
-  transform: scale(1.03);
-}
-
 .brand-icon {
   font-size: 2.2rem;
   background: linear-gradient(135deg, var(--primary-500), var(--primary-700));
@@ -896,22 +883,7 @@ body.is-fullscreen .btn-big-spin {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.4rem;
-}
-
-.footer-logo-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.footer-logo-img {
-  height: 38px;
-  width: auto;
-  object-fit: contain;
-  filter: drop-shadow(0 1px 3px rgba(2, 132, 199, 0.2));
+  gap: 0.35rem;
 }
 
 .footer-dept-name {
@@ -921,7 +893,7 @@ body.is-fullscreen .btn-big-spin {
 }
 
 .footer-subtext {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 500;
   color: var(--primary-700);
 }
@@ -929,5 +901,5 @@ body.is-fullscreen .btn-big-spin {
 .footer-copy {
   font-size: 0.85rem;
   color: var(--text-muted);
-  margin-top: 0.2rem;
+  margin-top: 0.15rem;
 }
