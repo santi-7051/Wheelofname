@@ -53,6 +53,13 @@ class WheelEngine {
     this.onSpinEnd = options.onSpinEnd || (() => {});
     this.onTick = options.onTick || (() => {});
 
+    // Center Logo
+    this.logoImg = new Image();
+    this.logoImg.src = 'logo.jpg';
+    this.logoImg.onload = () => {
+      this.draw();
+    };
+
     this.initCanvas();
     window.addEventListener('resize', () => this.handleResize());
   }
@@ -338,12 +345,28 @@ class WheelEngine {
     this.ctx.strokeStyle = '#ffffff';
     this.ctx.stroke();
 
-    // Inner icon / Center symbol (Star or Dice)
-    this.ctx.fillStyle = '#0284c7';
-    this.ctx.font = `bold ${Math.floor(hubRadius * 0.75)}px 'Kanit', sans-serif`;
-    this.ctx.textAlign = 'center';
-    this.ctx.textBaseline = 'middle';
-    this.ctx.fillText('🎯', cx, cy + 1);
+    // Center Hub Content (Logo or Fallback Icon)
+    if (this.logoImg && this.logoImg.complete && this.logoImg.naturalWidth > 0) {
+      this.ctx.save();
+      this.ctx.beginPath();
+      this.ctx.arc(cx, cy, hubRadius - 3, 0, Math.PI * 2);
+      this.ctx.closePath();
+      this.ctx.clip();
+
+      this.ctx.fillStyle = '#ffffff';
+      this.ctx.fill();
+
+      const imgSize = (hubRadius - 3) * 2;
+      this.ctx.drawImage(this.logoImg, cx - imgSize / 2, cy - imgSize / 2, imgSize, imgSize);
+      this.ctx.restore();
+    } else {
+      // Fallback Icon
+      this.ctx.fillStyle = '#0284c7';
+      this.ctx.font = `bold ${Math.floor(hubRadius * 0.75)}px 'Kanit', sans-serif`;
+      this.ctx.textAlign = 'center';
+      this.ctx.textBaseline = 'middle';
+      this.ctx.fillText('🎯', cx, cy + 1);
+    }
 
     this.ctx.restore();
   }
